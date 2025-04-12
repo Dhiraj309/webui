@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Classification Prediction</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+
+        /* Base Styling */
+        body {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body.loaded {
+            opacity: 1;
+        }
+    
+        /* Wrapper to center content */
+        .container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    
+        /* Form Card Styling */
+        .form-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            border: 2px solid white;
+            text-align: center;
+        }
+    
+        /* Input Area Styling */
+        .input-area {
+            border: 2px dashed black;
+            padding: 15px;
+            min-height: 150px;
+            max-height: 400px;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: left;
+            overflow-y: auto;
+            cursor: text;
+            resize: vertical;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+    
+        .input-area:focus {
+            outline: none;
+            border-color: black;
+        }
+    
+        .input-area.dragover {
+            background-color: #d4edda;
+        }
+    
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            margin-top: 10px;
+        }
+    
+        /* Nav Item Hover Styling */
+        .nav-item:hover {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            transition: background-color 0.3s ease-in-out;
+        }
+    
+        /* Zoom Hover Effect */
+        .hover-zoom {
+            transition: transform 0.4s ease-in-out;
+        }
+    
+        .hover-zoom:hover {
+            transform: scale(1.1);
+        }
+    
+        /* Navbar Dropdown Menu */
+        .nav-item {
+            position: relative;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            z-index: 999;
+        }
+    
+        /* Dropdown on Hover for Desktops */
+        @media (min-width: 992px) {
+            .nav-item:hover .dropdown-menu {
+                display: block;
+            }
+        }
+    
+        /* Dropdown on Click for Mobile */
+        @media (max-width: 991px) {
+            .nav-item .dropdown-menu {
+                display: none;
+                position: static;
+                box-shadow: none;
+            }
+    
+            .nav-item.show .dropdown-menu {
+                display: block;
+            }
+        }
+    </style>
+    
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-medium fs-4" href="#">
+                <img src="{{ url_for('static', filename = './images/Brand.jpg')}}" style="width: 50px; height: 50px; margin-right: 10px;">
+                Project MW
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto p-2 fw-normal fs-5">
+                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('home') }}">Home</a></li>
+    
+                    <!-- AI Model Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aiModelDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            AI Model
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="aiModelDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('features') }}">TEXA (Textual Extraction & Analysis)</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('features')}}">VISTA (Vision Interpretation & Scene Tagging AI)</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('features')}}">VION (Video Intelligence & Object Notation)</a></li>
+                        </ul>
+                    </li>
+    
+                    <!-- About Us Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aboutUsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            About Us
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="aboutUsDropdown">
+                            <li><a class="dropdown-item" href="#">Our Team</a></li>
+                            <li><a class="dropdown-item" href="#">Company Info</a></li>
+                        </ul>
+                    </li>
+    
+                    <!-- About Project Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aboutProjectDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            About Project
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="aboutProjectDropdown">
+                            <li><a class="dropdown-item" href="#">Project Goals</a></li>
+                            <li><a class="dropdown-item" href="#">Development Process</a></li>
+                        </ul>
+                    </li>
+                </ul>
+    
+                <a class="btn btn-outline-dark rounded-pill mx-3" href="{{ url_for('sign') }}">Register</a>
+                <a class="btn btn-outline-dark rounded-pill" href="{{ url_for('sign') }}">Sign In</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-wrapper">
+        <div class="form-container">
+            <h2>Text Classification Prediction</h2>
+            <form id="predictionForm">
+                <div contenteditable="true" id="inputArea" class="input-area" data-placeholder="Type your text here or drag and drop a file..."></div>
+                <input type="file" id="fileInput" accept=".txt, .pdf" hidden>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-outline-dark w-50" id="submitButton">Get Prediction</button>
+                    <button type="button" class="btn btn-outline-dark w-50" id="summaryButton">Get Summary</button>
+                </div>
+
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border text-dark" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </form>
+
+            <div id="result" class="result d-none mt-4 p-3 rounded bg-light">
+                <h4>Result:</h4>
+                <p id="resultText"></p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    window.addEventListener('load', function () {
+        document.body.classList.add('loaded');
+    });
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputArea = document.getElementById("inputArea");
+            const fileInput = document.getElementById("fileInput");
+            const resultDiv = document.getElementById("result");
+            const resultText = document.getElementById("resultText");
+            const loadingSpinner = document.getElementById("loadingSpinner");
+        
+            // Enable file selection on double-click
+            inputArea.addEventListener("dblclick", function () {
+                fileInput.click();
+            });
+        
+            // Handle file drag-and-drop
+            inputArea.addEventListener("dragover", function (event) {
+                event.preventDefault();
+                inputArea.classList.add("dragover");
+            });
+        
+            inputArea.addEventListener("dragleave", function () {
+                inputArea.classList.remove("dragover");
+            });
+        
+            inputArea.addEventListener("drop", function (event) {
+                event.preventDefault();
+                inputArea.classList.remove("dragover");
+                const file = event.dataTransfer.files[0];
+                handleFileUpload(file);
+            });
+        
+            // Handle file selection
+            fileInput.addEventListener("change", function () {
+                const file = fileInput.files[0];
+                handleFileUpload(file);
+            });
+        
+            function handleFileUpload(file) {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        inputArea.innerText = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        
+            function fetchPrediction(endpoint, resultType) {
+                const inputText = inputArea.innerText.trim();
+        
+                if (inputText === "") {
+                    alert("Please enter some text.");
+                    return;
+                }
+        
+                // Show loading spinner
+                loadingSpinner.style.display = "block";
+                resultDiv.classList.add("d-none");
+        
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: inputText })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingSpinner.style.display = "none";
+                    resultDiv.classList.remove("d-none");
+        
+                    if (data.error) {
+                        resultText.innerText = "Error: " + data.error;
+                    } else {
+                        if (resultType === "category") {
+                            resultText.innerHTML = `<strong>Category:</strong> ${data.Category}`;
+                        } else if (resultType === "summary") {
+                            resultText.innerHTML = `<strong>Summary:</strong> ${data.Summary}`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    loadingSpinner.style.display = "none";
+                    resultDiv.classList.remove("d-none");
+                    resultText.innerText = "Error fetching prediction: " + error.message;
+                });
+            }
+        
+            // Button event listeners
+            document.getElementById("submitButton").addEventListener("click", function (event) {
+                event.preventDefault();
+                fetchPrediction('/predict_category', "category"); // Only fetch category
+            });
+        
+            document.getElementById("summaryButton").addEventListener("click", function (event) {
+                event.preventDefault();
+                fetchPrediction('/predict_summary', "summary"); // Only fetch summary
+            });
+        });
+        </script>           
+       
+
+</body>
+</html>

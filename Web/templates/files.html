@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #ffffff;
+            color: #000;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        body {
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        nav.navbar {
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        nav.navbar a.navbar-brand {
+            color: #000;
+            font-weight: bold;
+        }
+        nav.navbar a.nav-link {
+            color: #000;
+        }
+        nav.navbar a.nav-link:hover {
+            color: #007bff;
+        }
+        .form-container {
+            flex: 1;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .btn-outline-dark {
+            border-color: #000;
+            color: #000;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-dark:hover {
+            background-color: #000;
+            color: #fff;
+        }
+        footer {
+            background-color: #f8f9fa;
+            padding: 1rem 0;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            margin-top: auto;
+        }
+        footer p {
+            margin: 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand fw-medium fs-4" href="#">Project MW</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto p-2 fw-medium fs-5" id="navbar-items">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">AI Model</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="#">About Project</a></li>
+                </ul>
+                <a class="btn btn-outline-dark rounded-pill mx-3" href="sign.html">Register</a>
+                <a class="btn btn-outline-dark rounded-pill" href="sign.html">Sign In</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h2>Upload Folders</h2>
+        <form id="uploadForm">
+            <div class="mb-4">
+                <label for="folderInput" class="form-label">Select Folder</label>
+                <!-- Updated the input type to allow CSV and other files -->
+                <input type="file" id="folderInput" class="form-control" multiple webkitdirectory accept=".txt,.jpg,.jpeg,.png,.gif,.mp4,.mkv,.avi,.mov,.csv,.xlsx,.xls">
+            </div>
+            <button type="submit" class="btn btn-outline-dark w-100">Upload</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2024 Project MW, All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+    });
+        document.getElementById("uploadForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const files = document.getElementById("folderInput").files;
+            if (files.length === 0) {
+                alert("Please select a folder to upload.");
+                return;
+            }
+
+            // Define the allowed extensions
+            const allowedExtensions = /\.(txt|jpg|jpeg|png|gif|mp4|mkv|avi|mov|csv|xlsx|xls)$/i;
+            const validFiles = [];
+            const invalidFiles = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (allowedExtensions.test(file.name)) {
+                    validFiles.push(file.name);
+                } else {
+                    invalidFiles.push(file.name);
+                }
+            }
+
+            // Display the results
+            if (invalidFiles.length > 0) {
+                alert("The following files are not allowed and were excluded:\n" + invalidFiles.join("\n"));
+            }
+
+            if (validFiles.length > 0) {
+                alert("Successfully uploaded the following files:\n" + validFiles.join("\n"));
+            } else {
+                alert("No valid files to upload. Please select a folder containing only valid files.");
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

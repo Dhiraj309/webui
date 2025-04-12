@@ -1,0 +1,221 @@
+/* Smooth Page Load */
+body {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+body.loaded {
+    opacity: 1;
+}
+
+/* Light Theme Defaults */
+body,
+.navbar,
+.dropdown-menu,
+.image-text-container,
+.header,
+.models,
+.footer {
+    background-color: white;
+    color: black;
+}
+
+.navbar,
+.dropdown-menu,
+.image-text-container {
+    border-color: white;
+}
+
+a,
+.text-dark,
+.text-content,
+.img-text,
+.sub-text,
+.header-content p,
+.features p,
+.models p {
+    color: black;
+}
+
+/* Hover Effects */
+.nav-item:hover {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.7s ease-in-out;
+}
+
+/* Zoom Hover Effect */
+.hover-zoom {
+    transition: transform 0.4s ease-in-out;
+}
+
+.hover-zoom:hover {
+    transform: scale(1.1);
+}
+
+/* Header Section */
+.header {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f8fafc;
+    padding: 0 50px;
+}
+
+.header img {
+    height: 500px;
+    width: auto;
+    margin-left: 20px;
+    border-radius: 6px;
+}
+
+/* Features Section */
+.features {
+    margin: 5rem 0;
+    padding: 2rem;
+    background-color: white;
+}
+
+/* Image-Text Container */
+.image-text-container {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid white;
+    background-color: white;
+    border-radius: 8px;
+    transition: box-shadow 0.3s;
+}
+
+.image-text-container:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.image-text-container img {
+    max-height: 150px;
+    width: auto;
+    border-radius: 8px;
+}
+
+.text-content {
+    margin-left: 15px;
+}
+
+/* Models Section */
+.models {
+    height: 100vh;
+    width: auto;
+    display: flex;
+    background-color: #f8fafc;
+}
+
+/* Image Effects */
+.img-fluid {
+    transition: transform 0.4s ease-in-out;
+}
+
+.img-fluid:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* Footer */
+.footer {
+    background-color: white;
+}
+
+/* DARK MODE STYLES */
+body.dark-mode,
+body.dark-mode .navbar,
+body.dark-mode .dropdown-menu,
+body.dark-mode .image-text-container,
+body.dark-mode .header,
+body.dark-mode .models,
+body.dark-mode .footer {
+    background-color: #121212 !important;
+    color: #f1f1f1 !important;
+}
+
+/* Alternate section backgrounds */
+body.dark-mode .header {
+    background-color: #1e1e1e !important;
+}
+
+body.dark-mode .features {
+    background-color: #121212 !important;
+}
+
+body.dark-mode .models {
+    background-color: #1e1e1e !important;
+}
+
+body.dark-mode .footer {
+    background-color: #121212 !important;
+}
+
+/* Text Colors */
+body.dark-mode a,
+body.dark-mode .text-dark,
+body.dark-mode .text-content,
+body.dark-mode .img-text,
+body.dark-mode .sub-text,
+body.dark-mode .header-content p,
+body.dark-mode .features p,
+body.dark-mode .models p {
+    color: #f1f1f1 !important;
+}
+
+/* Hover & Interactive Elements */
+body.dark-mode .nav-item:hover {
+    background-color: #1f1f1f !important;
+}
+
+body.dark-mode .image-text-container {
+    border-color: #2c2c2c !important;
+    background-color: #1e1e1e !important;
+}
+
+/* Buttons */
+body.dark-mode .btn-outline-dark {
+    color: #f1f1f1;
+    border-color: #f1f1f1;
+}
+
+body.dark-mode .btn-outline-dark:hover {
+    background-color: #f1f1f1;
+    color: #121212;
+}
+
+/* Enable dropdown on hover */
+.navbar .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+/* Fix Bootstrap animation jump */
+.navbar .dropdown-menu {
+    margin-top: 0;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.navbar .dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Light Mode Dropdown Hover Styles */
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+/* Dark Mode Dropdown Hover Styles */
+body.dark-mode .dropdown-menu .dropdown-item:hover {
+    background-color: #1f1f1f;
+    color: #f1f1f1;
+}

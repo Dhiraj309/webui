@@ -1,0 +1,105 @@
+import pandas as pd
+import random
+from collections import defaultdict
+import ast
+from datasets import load_dataset
+
+# Load the main dataset
+main_data = pd.read_csv("/kaggle/input/main-sub-labels/Main_Sub_Labels.csv")
+
+# Safely evaluate the "Words" column to convert strings to lists
+def safe_literal_eval(value):
+    try:
+        return ast.literal_eval(value)
+    except (ValueError, SyntaxError):
+        return None
+
+# Apply the safe literal evaluation to convert stringified lists back to Python lists
+main_data["Words"] = main_data["Words"].apply(safe_literal_eval)
+
+# Extract keywords and label from the first row
+keys = main_data["Words"][0]  # List of keywords for the first row
+main_label = main_data["Label"][0]  # Main label for these keywords
+
+# Parameter: Number of articles per keyword
+articles_per_key = 5
+min_text_words = 500  # Minimum word count for article text
+
+# Load the Wikipedia dataset (split="train")
+dataset = load_dataset("wikipedia", "20220301.en", split="train")
+
+# Filter articles based on the main label and minimum word length
+filtered_articles = []
+print("Filtering articles based on main label and minimum word count...")
+
+for article in dataset:
+    text = article['text']
+    title = article['title']
+    
+    # Check if the article meets the minimum word count and contains the main label
+    if len(text.split()) >= min_text_words and main_label.lower() in text.lower():
+        filtered_articles.append(article)
+
+print(f"Filtered {len(filtered_articles)} articles based on main label and minimum word count.")
+
+# Create a lowercase set of keywords for easy matching
+keys_set = set(key.lower() for key in keys)
+
+# Prepare to group articles by keywords
+articles_by_keyword = defaultdict(list)
+
+# Prepare a set to keep track of unique article titles to avoid duplicates
+unique_titles = set()
+
+# Iterate over the filtered dataset to match relevant articles based on keywords
+print("Matching articles with keywords...")
+for article in filtered_articles:
+    title = article['title'].lower()
+    text = article['text'].lower()
+
+    # Check if the title or text contains any of the keywords
+    for keyword in keys_set:
+        if keyword in title or keyword in text:
+            # Ensure that the article has not been added already by checking the title
+            if title not in unique_titles:
+                articles_by_keyword[keyword].append(article)
+                unique_titles.add(title)  # Mark this article's title as used
+            break  # Only store the first match for efficiency
+
+print(f"Completed matching. {len(articles_by_keyword)} keywords found.")
+
+# Ensure that each keyword gets articles
+final_articles = []
+
+for keyword in keys_set:
+    # If the keyword doesn't have enough articles, pad with duplicates from other matches
+    articles = articles_by_keyword[keyword]
+
+    if len(articles) < articles_per_key:
+        # Not enough articles, pad with random articles from the whole dataset
+        needed_articles = articles_per_key - len(articles)
+        all_available_articles = [article for article in filtered_articles if article['title'].lower() != keyword]
+        extra_articles = random.sample(all_available_articles, needed_articles)
+        articles += extra_articles
+
+    # Add the selected articles (up to `articles_per_key`) to the final list
+    random.shuffle(articles)  # Shuffle the articles to avoid ordering bias
+    selected_articles = articles[:articles_per_key]
+
+    for article in selected_articles:
+        final_articles.append({
+            "Title": article['title'],
+            "Text": article['text'].strip(),
+            "Main Label": main_label,
+            "Sub Label": keyword
+        })
+    
+    print(f"Successfully fetched {len(selected_articles)} articles for keyword: '{keyword}'.")
+
+# Collect results into a DataFrame
+final_articles_df = pd.DataFrame(final_articles)
+
+# Save the output to a CSV file
+final_articles_df.to_csv("/kaggle/working/filtered_articles.csv", index=False)
+
+print(f"All articles have been successfully processed and saved to 'filtered_articles.csv'.")
